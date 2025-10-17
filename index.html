@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
-  <title>Трекинг и переход</title>
+  <title>Параметры трекера</title>
   <style>
     body {
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
@@ -11,44 +11,23 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: flex-start;
+      justify-content: center;
       min-height: 100vh;
-      padding: 30px 20px;
+      padding: 20px;
     }
     h1 {
       font-size: 2rem;
       margin-bottom: 1rem;
-    }
-    p {
-      font-size: 1.1rem;
-      max-width: 600px;
-      text-align: center;
-      line-height: 1.5;
-      margin-bottom: 1.5rem;
-    }
-    a.tracking-link {
-      display: inline-block;
-      background: #007bff;
-      color: #fff;
-      text-decoration: none;
-      padding: 12px 22px;
-      border-radius: 8px;
-      font-size: 1.1rem;
-      transition: background 0.2s;
-    }
-    a.tracking-link:hover {
-      background: #0056b3;
     }
     .params {
       background: #fff;
       border-radius: 12px;
       box-shadow: 0 2px 8px rgba(0,0,0,0.1);
       padding: 20px 30px;
-      font-size: 1.1rem;
+      font-size: 1.2rem;
       line-height: 1.6;
-      max-width: 700px;
+      max-width: 600px;
       width: 100%;
-      margin-top: 2rem;
     }
     .param {
       display: flex;
@@ -77,88 +56,37 @@
     }
 
     window.addEventListener('DOMContentLoaded', () => {
-      const params = {
-        site: getParam('site'),
-        site_id: getParam('site_id'),
-        title: getParam('title'),
-        platform: getParam('platform'),
-        campaign_id: getParam('campaign_id'),
-        campaign_item_id: getParam('campaign_item_id'),
-        thumbnail: getParam('thumbnail'),
-        click_id: getParam('click_id'),
-        cpid: getParam('cpid'),
-        oid: getParam('oid'),
-        clickid: getParam('clickid'),
-        campaignid: getParam('campaignid')
-      };
+      const site = getParam('site');
+      const site_id = getParam('site_id');
+      const title = getParam('title');
+      const platform = getParam('platform');
+      const campaign_id = getParam('campaign_id');
+      const campaign_item_id = getParam('campaign_item_id');
+      const thumbnail = getParam('thumbnail');
+      const click_id = getParam('click_id');
 
-      // Показ параметров на странице
+      // Формируем трекинговый URL с campaign_id в середине
+      const trackingUrl = `https://guirmannurcence.com/impression/${encodeURIComponent(campaign_id)}?site=${encodeURIComponent(site)}&site_id=${encodeURIComponent(site_id)}&title=${encodeURIComponent(title)}&platform=${encodeURIComponent(platform)}&campaign_id=${encodeURIComponent(campaign_id)}&campaign_item_id=${encodeURIComponent(campaign_item_id)}&thumbnail=${encodeURIComponent(thumbnail)}&click_id=${encodeURIComponent(click_id)}`;
+
+      // ✅ Отправляем пиксель ТОЛЬКО один раз
+      const img = document.createElement('img');
+      img.src = trackingUrl;
+      img.style.display = 'none';
+      document.body.appendChild(img);
+
+      // Вывод параметров на страницу
+      const params = { site, site_id, title, platform, campaign_id, campaign_item_id, thumbnail, click_id };
       const paramsBox = document.querySelector('.params');
       paramsBox.innerHTML = Object.entries(params).map(([key, value]) => `
         <div class="param"><span>${key}:</span><span>${value}</span></div>
       `).join('');
-
-      // Подготовка ссылки с заменой параметров
-      const link = document.querySelector('.tracking-link');
-      link.addEventListener('click', (e) => {
-        e.preventDefault();
-
-        // Формируем целевой URL (OfferPage) с параметрами
-        const offerBase = 'https://letsuptoyouteam-hash.github.io/OfferPage/';
-        const urlParams = new URLSearchParams(params).toString();
-        const offerUrl = `${offerBase}?${urlParams}`;
-
-        // Вставляем в head трекинговый скрипт динамически
-        const trackingContainer = document.createElement('div');
-        trackingContainer.innerHTML = `
-          <meta http-equiv="delegate-ch" content="sec-ch-ua https://guirmannurcence.com; sec-ch-ua-mobile https://guirmannurcence.com; sec-ch-ua-arch https://guirmannurcence.com; sec-ch-ua-model https://guirmannurcence.com; sec-ch-ua-platform https://guirmannurcence.com; sec-ch-ua-platform-version https://guirmannurcence.com; sec-ch-ua-bitness https://guirmannurcence.com; sec-ch-ua-full-version-list https://guirmannurcence.com; sec-ch-ua-full-version https://guirmannurcence.com">
-          <script>
-            (function(c,d,f,h,t,b,n,u,k,l,m,e,p,v,q){
-              function r(a){
-                var c=d.cookie.match(new RegExp("(^| )"+a+"=([^;]+)"));
-                return c?c.pop():f.getItem(a+"-expires")&&+f.getItem(a+"-expires")>(new Date).getTime()?f.getItem(a):null
-              }
-              q="https:"===c.location.protocol?"secure; ":"";
-              c[b]||(c[b]=function(a){c[b].state.callbackQueue.push(a)},
-              c[b].state={callbackQueue:[]},
-              c[b].registerConversion=function(a){c[b].state.callbackQueue.push(a)},
-              function(){
-                (m=/[?&]cpid(=([^&#]*)|&|#|$)/.exec(c.location.href))&&m[2]&&(e=m[2],p=r("vl-"+e));
-                var a=r("vl-cid"),b;"savedCid"!==u||!a||e&&"undefined"!==typeof e||(b=a);
-                k=d.createElement("script");
-                l=d.scripts[0];
-                k.src=n+(-1===n.indexOf("?")?"?":"&")+"oref="+h(d.referrer)+"&ourl="+h(location[t])+"&opt="+h(d.title)+"&vtm="+(new Date).getTime()+(b?"&cid="+b:"")+(p?"&uw=no":"");
-                l.parentNode.insertBefore(k,l);
-                if(e){
-                  a="vl-"+e;b=q;
-                  var g=new Date;
-                  g.setTime(g.getTime()+864E5);
-                  d.cookie=a+"=1; "+b+"samesite=Strict; expires="+g.toGMTString()+"; path=/";
-                  f.setItem(a,"1");
-                  f.setItem(a+"-expires",g.getTime())
-                }
-              }())
-            })(window,document,localStorage,encodeURIComponent,"href","dtpCallback","https://guirmannurcence.com/d/.js","savedCid");
-          <\/script>
-        `;
-        document.head.appendChild(trackingContainer);
-
-        // Небольшая задержка перед переходом, чтобы трекинг точно сработал
-        setTimeout(() => {
-          window.location.href = offerUrl;
-        }, 400);
-      });
     });
   </script>
 </head>
 <body>
   <h1>📊 Параметры вычитаны из ссылки</h1>
-  <p>
-    Ниже отображаются параметры, которые пришли в URL.<br>
-    Нажми на ссылку ниже — при клике сначала сработает трекинг, а затем произойдёт переход 👇
-  </p>
-  <a href="#" class="tracking-link">Link with logic, Click me.</a>
-
-  <div class="params"></div>
+  <div class="params">
+    <!-- Параметры подставятся сюда -->
+  </div>
 </body>
 </html>
