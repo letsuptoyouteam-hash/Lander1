@@ -2,9 +2,90 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
-  <title>Lander №1</title>
+  <title>Параметры трекера</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: #f4f6f8;
+      color: #222;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
+    h1 {
+      font-size: 2rem;
+      margin-bottom: 1rem;
+    }
+    .params {
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      padding: 20px 30px;
+      font-size: 1.2rem;
+      line-height: 1.6;
+      max-width: 500px;
+      width: 100%;
+    }
+    .param {
+      display: flex;
+      justify-content: space-between;
+      border-bottom: 1px solid #eee;
+      padding: 6px 0;
+    }
+    .param:last-child {
+      border-bottom: none;
+    }
+    .param span:first-child {
+      font-weight: 600;
+      color: #555;
+    }
+    .param span:last-child {
+      color: #000;
+      word-break: break-all;
+    }
+  </style>
+  <script>
+    function getParam(name) {
+      const urlParams = new URLSearchParams(window.location.search);
+      return urlParams.get(name) || '';
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      const site = getParam('site');
+      const title = getParam('title');
+      const click_id = getParam('click_id');
+      const version = getParam('version');
+
+      // Формируем трекинговый URL
+      const trackingUrl = `https://guirmannurcence.com/impression/843ca534-0104-4ecd-82df-657cb79b86c1?site=${encodeURIComponent(site)}&title=${encodeURIComponent(title)}&click_id=${encodeURIComponent(click_id)}&version=${encodeURIComponent(version)}`;
+
+      // Отправляем "зажигание" через пиксель и fetch
+      const img = document.createElement('img');
+      img.src = trackingUrl;
+      img.style.display = 'none';
+      document.body.appendChild(img);
+      fetch(trackingUrl).catch(()=>{});
+
+      // Вывод параметров на страницу
+      const paramsBox = document.querySelector('.params');
+      paramsBox.innerHTML = `
+        <div class="param"><span>site:</span><span>${site}</span></div>
+        <div class="param"><span>title:</span><span>${title}</span></div>
+        <div class="param"><span>click_id:</span><span>${click_id}</span></div>
+        <div class="param"><span>version:</span><span>${version}</span></div>
+      `;
+    });
+  </script>
 </head>
 <body>
-  <h1>Это сайт №1 🚀</h1>
+  <h1>📊 Параметры вычитаны из ссылки</h1>
+  <div class="params">
+    <!-- сюда подставятся параметры -->
+  </div>
 </body>
 </html>
+
+
