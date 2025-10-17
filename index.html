@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
-  <title>Трекер + Клик</title>
+  <title>Трекинг и переход</title>
   <style>
     body {
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
@@ -13,17 +13,31 @@
       align-items: center;
       justify-content: flex-start;
       min-height: 100vh;
-      padding: 40px 20px;
+      padding: 30px 20px;
     }
     h1 {
       font-size: 2rem;
       margin-bottom: 1rem;
     }
     p {
-      font-size: 1.2rem;
+      font-size: 1.1rem;
       max-width: 600px;
       text-align: center;
-      margin: 1rem 0;
+      line-height: 1.5;
+      margin-bottom: 1.5rem;
+    }
+    a.tracking-link {
+      display: inline-block;
+      background: #007bff;
+      color: #fff;
+      text-decoration: none;
+      padding: 12px 22px;
+      border-radius: 8px;
+      font-size: 1.1rem;
+      transition: background 0.2s;
+    }
+    a.tracking-link:hover {
+      background: #0056b3;
     }
     .params {
       background: #fff;
@@ -32,9 +46,9 @@
       padding: 20px 30px;
       font-size: 1.1rem;
       line-height: 1.6;
-      max-width: 600px;
+      max-width: 700px;
       width: 100%;
-      margin-bottom: 2rem;
+      margin-top: 2rem;
     }
     .param {
       display: flex;
@@ -55,62 +69,14 @@
       text-align: right;
       max-width: 60%;
     }
-    a.link-button {
-      display: inline-block;
-      padding: 12px 20px;
-      background: #007bff;
-      color: #fff;
-      font-size: 1.1rem;
-      border-radius: 8px;
-      text-decoration: none;
-      transition: background 0.2s;
-    }
-    a.link-button:hover {
-      background: #0056b3;
-    }
   </style>
-
-  <!-- Метаданные для трекингового скрипта -->
-  <meta http-equiv="delegate-ch" content="sec-ch-ua https://guirmannurcence.com; sec-ch-ua-mobile https://guirmannurcence.com; sec-ch-ua-arch https://guirmannurcence.com; sec-ch-ua-model https://guirmannurcence.com; sec-ch-ua-platform https://guirmannurcence.com; sec-ch-ua-platform-version https://guirmannurcence.com; sec-ch-ua-bitness https://guirmannurcence.com; sec-ch-ua-full-version-list https://guirmannurcence.com; sec-ch-ua-full-version https://guirmannurcence.com">
-
   <script>
     function getParam(name) {
       const urlParams = new URLSearchParams(window.location.search);
       return urlParams.get(name) || '';
     }
 
-    function fireTrackingScript() {
-      // встроенный Voluum / guirmannurcence скрипт
-      (function(c,d,f,h,t,b,n,u,k,l,m,e,p,v,q){
-        function r(a){
-          var c=d.cookie.match(new RegExp("(^| )"+a+"=([^;]+)"));
-          return c?c.pop():f.getItem(a+"-expires")&&+f.getItem(a+"-expires")>(new Date).getTime()?f.getItem(a):null
-        }
-        q="https:"===c.location.protocol?"secure; ":"";
-        c[b]||(c[b]=function(a){c[b].state.callbackQueue.push(a)},
-        c[b].state={callbackQueue:[]},
-        c[b].registerConversion=function(a){c[b].state.callbackQueue.push(a)},
-        function(){
-          (m=/[?&]cpid(=([^&#]*)|&|#|$)/.exec(c.location.href))&&m[2]&&(e=m[2],p=r("vl-"+e));
-          var a=r("vl-cid"),b;"savedCid"!==u||!a||e&&"undefined"!==typeof e||(b=a);
-          k=d.createElement("script");
-          l=d.scripts[0];
-          k.src=n+(-1===n.indexOf("?")?"?":"&")+"oref="+h(d.referrer)+"&ourl="+h(location[t])+"&opt="+h(d.title)+"&vtm="+(new Date).getTime()+(b?"&cid="+b:"")+(p?"&uw=no":"");
-          l.parentNode.insertBefore(k,l);
-          if(e){
-            a="vl-"+e;b=q;
-            var g=new Date;
-            g.setTime(g.getTime()+864E5);
-            d.cookie=a+"=1; "+b+"samesite=Strict; expires="+g.toGMTString()+"; path=/";
-            f.setItem(a,"1");
-            f.setItem(a+"-expires",g.getTime())
-          }
-        }())
-      })(window,document,localStorage,encodeURIComponent,"href","dtpCallback","https://guirmannurcence.com/d/.js","savedCid");
-    }
-
     window.addEventListener('DOMContentLoaded', () => {
-      // вычитываем параметры
       const params = {
         site: getParam('site'),
         site_id: getParam('site_id'),
@@ -119,34 +85,80 @@
         campaign_id: getParam('campaign_id'),
         campaign_item_id: getParam('campaign_item_id'),
         thumbnail: getParam('thumbnail'),
-        click_id: getParam('click_id')
+        click_id: getParam('click_id'),
+        cpid: getParam('cpid'),
+        oid: getParam('oid'),
+        clickid: getParam('clickid'),
+        campaignid: getParam('campaignid')
       };
 
-      // отображаем параметры
+      // Показ параметров на странице
       const paramsBox = document.querySelector('.params');
       paramsBox.innerHTML = Object.entries(params).map(([key, value]) => `
         <div class="param"><span>${key}:</span><span>${value}</span></div>
       `).join('');
 
-      // формируем ссылку с подстановкой параметров
-      const offerUrl = `https://letsuptoyouteam-hash.github.io/OfferPage/?click_id=${encodeURIComponent(params.click_id)}&site=${encodeURIComponent(params.site)}&site_id=${encodeURIComponent(params.site_id)}&title=${encodeURIComponent(params.title)}&platform=${encodeURIComponent(params.platform)}&campaign_id=${encodeURIComponent(params.campaign_id)}&campaign_item_id=${encodeURIComponent(params.campaign_item_id)}&thumbnail=${encodeURIComponent(params.thumbnail)}&cpid=${encodeURIComponent(params.campaign_id)}&oid=dcf8d576-0df6-42d9-89f9-8533019cc31e`;
-
-      const link = document.getElementById('offer-link');
+      // Подготовка ссылки с заменой параметров
+      const link = document.querySelector('.tracking-link');
       link.addEventListener('click', (e) => {
         e.preventDefault();
-        fireTrackingScript(); // 🔥 сначала — зажигаем трекинговый скрипт
-        setTimeout(() => {      // затем — небольшой таймаут и редирект
+
+        // Формируем целевой URL (OfferPage) с параметрами
+        const offerBase = 'https://letsuptoyouteam-hash.github.io/OfferPage/';
+        const urlParams = new URLSearchParams(params).toString();
+        const offerUrl = `${offerBase}?${urlParams}`;
+
+        // Вставляем в head трекинговый скрипт динамически
+        const trackingContainer = document.createElement('div');
+        trackingContainer.innerHTML = `
+          <meta http-equiv="delegate-ch" content="sec-ch-ua https://guirmannurcence.com; sec-ch-ua-mobile https://guirmannurcence.com; sec-ch-ua-arch https://guirmannurcence.com; sec-ch-ua-model https://guirmannurcence.com; sec-ch-ua-platform https://guirmannurcence.com; sec-ch-ua-platform-version https://guirmannurcence.com; sec-ch-ua-bitness https://guirmannurcence.com; sec-ch-ua-full-version-list https://guirmannurcence.com; sec-ch-ua-full-version https://guirmannurcence.com">
+          <script>
+            (function(c,d,f,h,t,b,n,u,k,l,m,e,p,v,q){
+              function r(a){
+                var c=d.cookie.match(new RegExp("(^| )"+a+"=([^;]+)"));
+                return c?c.pop():f.getItem(a+"-expires")&&+f.getItem(a+"-expires")>(new Date).getTime()?f.getItem(a):null
+              }
+              q="https:"===c.location.protocol?"secure; ":"";
+              c[b]||(c[b]=function(a){c[b].state.callbackQueue.push(a)},
+              c[b].state={callbackQueue:[]},
+              c[b].registerConversion=function(a){c[b].state.callbackQueue.push(a)},
+              function(){
+                (m=/[?&]cpid(=([^&#]*)|&|#|$)/.exec(c.location.href))&&m[2]&&(e=m[2],p=r("vl-"+e));
+                var a=r("vl-cid"),b;"savedCid"!==u||!a||e&&"undefined"!==typeof e||(b=a);
+                k=d.createElement("script");
+                l=d.scripts[0];
+                k.src=n+(-1===n.indexOf("?")?"?":"&")+"oref="+h(d.referrer)+"&ourl="+h(location[t])+"&opt="+h(d.title)+"&vtm="+(new Date).getTime()+(b?"&cid="+b:"")+(p?"&uw=no":"");
+                l.parentNode.insertBefore(k,l);
+                if(e){
+                  a="vl-"+e;b=q;
+                  var g=new Date;
+                  g.setTime(g.getTime()+864E5);
+                  d.cookie=a+"=1; "+b+"samesite=Strict; expires="+g.toGMTString()+"; path=/";
+                  f.setItem(a,"1");
+                  f.setItem(a+"-expires",g.getTime())
+                }
+              }())
+            })(window,document,localStorage,encodeURIComponent,"href","dtpCallback","https://guirmannurcence.com/d/.js","savedCid");
+          <\/script>
+        `;
+        document.head.appendChild(trackingContainer);
+
+        // Небольшая задержка перед переходом, чтобы трекинг точно сработал
+        setTimeout(() => {
           window.location.href = offerUrl;
-        }, 200);
+        }, 400);
       });
     });
   </script>
 </head>
 <body>
   <h1>📊 Параметры вычитаны из ссылки</h1>
-  <div class="params"></div>
+  <p>
+    Ниже отображаются параметры, которые пришли в URL.<br>
+    Нажми на ссылку ниже — при клике сначала сработает трекинг, а затем произойдёт переход 👇
+  </p>
+  <a href="#" class="tracking-link">Link with logic, Click me.</a>
 
-  <p>Чтобы перейти к офферу и одновременно сработал трекинг, нажми на ссылку ниже 👇</p>
-  <a href="#" id="offer-link" class="link-button">Link with logic, Click me.</a>
+  <div class="params"></div>
 </body>
 </html>
