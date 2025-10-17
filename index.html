@@ -68,12 +68,11 @@
       // Формируем трекинговый URL с campaign_id в середине
       const trackingUrl = `https://guirmannurcence.com/impression/${encodeURIComponent(campaign_id)}?site=${encodeURIComponent(site)}&site_id=${encodeURIComponent(site_id)}&title=${encodeURIComponent(title)}&platform=${encodeURIComponent(platform)}&campaign_id=${encodeURIComponent(campaign_id)}&campaign_item_id=${encodeURIComponent(campaign_item_id)}&thumbnail=${encodeURIComponent(thumbnail)}&click_id=${encodeURIComponent(click_id)}`;
 
-      // Отправляем "зажигание" через пиксель и fetch
+      // ✅ Отправляем пиксель ТОЛЬКО один раз
       const img = document.createElement('img');
       img.src = trackingUrl;
       img.style.display = 'none';
       document.body.appendChild(img);
-      fetch(trackingUrl).catch(()=>{});
 
       // Вывод параметров на страницу
       const params = { site, site_id, title, platform, campaign_id, campaign_item_id, thumbnail, click_id };
