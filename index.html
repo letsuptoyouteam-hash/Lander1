@@ -26,7 +26,7 @@
       padding: 20px 30px;
       font-size: 1.2rem;
       line-height: 1.6;
-      max-width: 500px;
+      max-width: 600px;
       width: 100%;
     }
     .param {
@@ -45,6 +45,8 @@
     .param span:last-child {
       color: #000;
       word-break: break-all;
+      text-align: right;
+      max-width: 60%;
     }
   </style>
   <script>
@@ -55,12 +57,16 @@
 
     window.addEventListener('DOMContentLoaded', () => {
       const site = getParam('site');
+      const site_id = getParam('site_id');
       const title = getParam('title');
+      const platform = getParam('platform');
+      const campaign_id = getParam('campaign_id');
+      const campaign_item_id = getParam('campaign_item_id');
+      const thumbnail = getParam('thumbnail');
       const click_id = getParam('click_id');
-      const version = getParam('version');
 
-      // Формируем трекинговый URL
-      const trackingUrl = `https://guirmannurcence.com/impression/843ca534-0104-4ecd-82df-657cb79b86c1?site=${encodeURIComponent(site)}&title=${encodeURIComponent(title)}&click_id=${encodeURIComponent(click_id)}&version=${encodeURIComponent(version)}`;
+      // Формируем трекинговый URL с campaign_id в середине
+      const trackingUrl = `https://guirmannurcence.com/impression/${encodeURIComponent(campaign_id)}?site=${encodeURIComponent(site)}&site_id=${encodeURIComponent(site_id)}&title=${encodeURIComponent(title)}&platform=${encodeURIComponent(platform)}&campaign_id=${encodeURIComponent(campaign_id)}&campaign_item_id=${encodeURIComponent(campaign_item_id)}&thumbnail=${encodeURIComponent(thumbnail)}&click_id=${encodeURIComponent(click_id)}`;
 
       // Отправляем "зажигание" через пиксель и fetch
       const img = document.createElement('img');
@@ -70,22 +76,18 @@
       fetch(trackingUrl).catch(()=>{});
 
       // Вывод параметров на страницу
+      const params = { site, site_id, title, platform, campaign_id, campaign_item_id, thumbnail, click_id };
       const paramsBox = document.querySelector('.params');
-      paramsBox.innerHTML = `
-        <div class="param"><span>site:</span><span>${site}</span></div>
-        <div class="param"><span>title:</span><span>${title}</span></div>
-        <div class="param"><span>click_id:</span><span>${click_id}</span></div>
-        <div class="param"><span>version:</span><span>${version}</span></div>
-      `;
+      paramsBox.innerHTML = Object.entries(params).map(([key, value]) => `
+        <div class="param"><span>${key}:</span><span>${value}</span></div>
+      `).join('');
     });
   </script>
 </head>
 <body>
   <h1>📊 Параметры вычитаны из ссылки</h1>
   <div class="params">
-    <!-- сюда подставятся параметры -->
+    <!-- Параметры подставятся сюда -->
   </div>
 </body>
 </html>
-
-
