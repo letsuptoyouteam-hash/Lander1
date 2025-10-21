@@ -36,14 +36,14 @@
     }
   </style>
   <script>
-    // Утилита: достаём параметр из URL
+    // Достаём параметр из URL
     function getParam(name) {
       const urlParams = new URLSearchParams(window.location.search);
       return urlParams.get(name) || '';
     }
 
     window.addEventListener('DOMContentLoaded', () => {
-      // Извлекаем параметры из URL
+      // Извлекаем параметры
       const params = {
         cpid: getParam('cpid'),
         'trafficsource.name': getParam('trafficsource.name'),
@@ -55,23 +55,31 @@
         ext_clickid: getParam('ext_clickid')
       };
 
-      // 🔹 Формируем ссылку для "показа" (impression)
-      const impressionUrl = `https://guirmannurcence.com/impression/${encodeURIComponent(params.cpid)}`
-        + `?trafficsource.name=${encodeURIComponent(params['trafficsource.name'])}`
-        + `&trafficsource.campaign.id=${encodeURIComponent(params['trafficsource.campaign.id'])}`
-        + `&voluum.campaign.id=${encodeURIComponent(params['voluum.campaign.id'] || params.cpid)}`
-        + `&lender.version.id=${encodeURIComponent(params['lender.version.id'])}`
-        + `&ext_clickid=${encodeURIComponent(params.ext_clickid || params.clickid)}`;
+      // Уникальные ID офферов
+      const offers = [
+        { id: 'dcf8d576-0df6-42d9-89f9-8533019cc31e', elementId: 'offer1' },
+        { id: 'f949fd2e-168d-49b0-894c-4c3ce35c397c', elementId: 'offer2' }
+      ];
 
-      // 🔹 Отправляем запрос на пиксель (зажигаем один раз)
-      const img = new Image();
-      img.src = impressionUrl;
-      img.style.display = 'none';
-      document.body.appendChild(img);
+      // 🔹 Зажигаем по пикселю для каждого оффера
+      offers.forEach(offer => {
+        const impressionUrl = `https://guirmannurcence.com/impression/${encodeURIComponent(params.cpid)}`
+          + `?trafficsource.name=${encodeURIComponent(params['trafficsource.name'])}`
+          + `&trafficsource.campaign.id=${encodeURIComponent(params['trafficsource.campaign.id'])}`
+          + `&voluum.campaign.id=${encodeURIComponent(params['voluum.campaign.id'] || params.cpid)}`
+          + `&lender.version.id=${encodeURIComponent(params['lender.version.id'])}`
+          + `&ext_clickid=${encodeURIComponent(params.ext_clickid || params.clickid)}`
+          + `&offer.id=${encodeURIComponent(offer.id)}`;
 
-      console.log('Impression URL:', impressionUrl);
+        const img = new Image();
+        img.src = impressionUrl;
+        img.style.display = 'none';
+        document.body.appendChild(img);
 
-      // 🔹 Формируем ссылки для кнопок
+        console.log('Impression fired for offer:', offer.id, impressionUrl);
+      });
+
+      // 🔹 Формируем ссылки для каждой кнопки
       const offer1Url = `https://guirmannurcence.com/${encodeURIComponent(params.cpid)}`
         + `?trafficsource.name=${encodeURIComponent(params['trafficsource.name'])}`
         + `&trafficsource.campaign.id=${encodeURIComponent(params['trafficsource.campaign.id'])}`
@@ -79,7 +87,7 @@
         + `&lender.version.id=${encodeURIComponent(params['lender.version.id'])}`
         + `&offer.id=${encodeURIComponent(params['offer.id'])}`
         + `&ext_clickid=${encodeURIComponent(params.clickid || params.ext_clickid)}`
-        + `&oid=dcf8d576-0df6-42d9-89f9-8533019cc31e`;
+        + `&oid=${offers[0].id}`;
 
       const offer2Url = `https://guirmannurcence.com/${encodeURIComponent(params.cpid)}`
         + `?trafficsource.name=${encodeURIComponent(params['trafficsource.name'])}`
@@ -88,7 +96,7 @@
         + `&lender.version.id=${encodeURIComponent(params['lender.version.id'])}`
         + `&offer.id=${encodeURIComponent(params['offer.id'])}`
         + `&ext_clickid=${encodeURIComponent(params.clickid || params.ext_clickid)}`
-        + `&oid=f949fd2e-168d-49b0-894c-4c3ce35c397c`;
+        + `&oid=${offers[1].id}`;
 
       // Привязываем ссылки к кнопкам
       document.getElementById('offer1').href = offer1Url;
