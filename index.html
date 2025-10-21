@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
-  <title>Параметры трекера</title>
+  <title>Офферы</title>
   <style>
     body {
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
@@ -13,80 +13,81 @@
       align-items: center;
       justify-content: center;
       min-height: 100vh;
-      padding: 20px;
     }
     h1 {
-      font-size: 2rem;
-      margin-bottom: 1rem;
+      font-size: 1.8rem;
+      margin-bottom: 2rem;
     }
-    .params {
-      background: #fff;
-      border-radius: 12px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-      padding: 20px 30px;
-      font-size: 1.2rem;
-      line-height: 1.6;
-      max-width: 600px;
-      width: 100%;
-    }
-    .param {
+    .buttons {
       display: flex;
-      justify-content: space-between;
-      border-bottom: 1px solid #eee;
-      padding: 6px 0;
+      gap: 1rem;
     }
-    .param:last-child {
-      border-bottom: none;
+    a.button {
+      background: #007bff;
+      color: white;
+      text-decoration: none;
+      padding: 12px 24px;
+      border-radius: 8px;
+      font-size: 1.2rem;
+      transition: background 0.2s;
     }
-    .param span:first-child {
-      font-weight: 600;
-      color: #555;
-    }
-    .param span:last-child {
-      color: #000;
-      word-break: break-all;
-      text-align: right;
-      max-width: 60%;
+    a.button:hover {
+      background: #0056b3;
     }
   </style>
   <script>
+    // Утилита: достаём параметр из URL
     function getParam(name) {
       const urlParams = new URLSearchParams(window.location.search);
       return urlParams.get(name) || '';
     }
 
     window.addEventListener('DOMContentLoaded', () => {
-      const site = getParam('site');
-      const site_id = getParam('site_id');
-      const title = getParam('title');
-      const platform = getParam('platform');
-      const campaign_id = getParam('campaign_id');
-      const campaign_item_id = getParam('campaign_item_id');
-      const thumbnail = getParam('thumbnail');
-      const click_id = getParam('click_id');
+      // Извлекаем параметры из URL
+      const params = {
+        cpid: getParam('cpid'),
+        'trafficsource.name': getParam('trafficsource.name'),
+        'trafficsource.campaign.id': getParam('trafficsource.campaign.id'),
+        'voluum.campaign.id': getParam('voluum.campaign.id'),
+        'lender.version.id': getParam('lender.version.id'),
+        'offer.id': getParam('offer.id'),
+        clickid: getParam('clickid')
+      };
 
-      // Формируем трекинговый URL с campaign_id в середине
-      const trackingUrl = `https://guirmannurcence.com/impression/${encodeURIComponent(campaign_id)}?site=${encodeURIComponent(site)}&site_id=${encodeURIComponent(site_id)}&title=${encodeURIComponent(title)}&platform=${encodeURIComponent(platform)}&campaign_id=${encodeURIComponent(campaign_id)}&campaign_item_id=${encodeURIComponent(campaign_item_id)}&thumbnail=${encodeURIComponent(thumbnail)}&click_id=${encodeURIComponent(click_id)}`;
+      // Формируем ссылки для каждой кнопки
+      const offer1Url = `https://guirmannurcence.com/${encodeURIComponent(params.cpid)}`
+        + `?trafficsource.name=${encodeURIComponent(params['trafficsource.name'])}`
+        + `&trafficsource.campaign.id=${encodeURIComponent(params['trafficsource.campaign.id'])}`
+        + `&voluum.campaign.id=${encodeURIComponent(params.cpid)}`
+        + `&lender.version.id=${encodeURIComponent(params['lender.version.id'])}`
+        + `&offer.id=${encodeURIComponent(params['offer.id'])}`
+        + `&ext_clickid=${encodeURIComponent(params.clickid)}`
+        + `&oid=dcf8d576-0df6-42d9-89f9-8533019cc31e`;
 
-      // ✅ Отправляем пиксель ТОЛЬКО один раз
-      const img = document.createElement('img');
-      img.src = trackingUrl;
-      img.style.display = 'none';
-      document.body.appendChild(img);
+      const offer2Url = `https://guirmannurcence.com/${encodeURIComponent(params.cpid)}`
+        + `?trafficsource.name=${encodeURIComponent(params['trafficsource.name'])}`
+        + `&trafficsource.campaign.id=${encodeURIComponent(params['trafficsource.campaign.id'])}`
+        + `&voluum.campaign.id=${encodeURIComponent(params.cpid)}`
+        + `&lender.version.id=${encodeURIComponent(params['lender.version.id'])}`
+        + `&offer.id=${encodeURIComponent(params['offer.id'])}`
+        + `&ext_clickid=${encodeURIComponent(params.clickid)}`
+        + `&oid=f949fd2e-168d-49b0-894c-4c3ce35c397c`;
 
-      // Вывод параметров на страницу
-      const params = { site, site_id, title, platform, campaign_id, campaign_item_id, thumbnail, click_id };
-      const paramsBox = document.querySelector('.params');
-      paramsBox.innerHTML = Object.entries(params).map(([key, value]) => `
-        <div class="param"><span>${key}:</span><span>${value}</span></div>
-      `).join('');
+      // Вставляем ссылки в кнопки
+      document.getElementById('offer1').href = offer1Url;
+      document.getElementById('offer2').href = offer2Url;
+
+      // Для отладки можно вывести в консоль
+      console.log('Offer 1 URL:', offer1Url);
+      console.log('Offer 2 URL:', offer2Url);
     });
   </script>
 </head>
 <body>
-  <h1>📊 Параметры вычитаны из ссылки</h1>
-  <div class="params">
-    <!-- Параметры подставятся сюда -->
+  <h1>Выберите оффер</h1>
+  <div class="buttons">
+    <a id="offer1" href="#" class="button">Оффер 1</a>
+    <a id="offer2" href="#" class="button">Оффер 2</a>
   </div>
 </body>
 </html>
