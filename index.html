@@ -51,17 +51,34 @@
         'voluum.campaign.id': getParam('voluum.campaign.id'),
         'lender.version.id': getParam('lender.version.id'),
         'offer.id': getParam('offer.id'),
-        clickid: getParam('clickid')
+        clickid: getParam('clickid'),
+        ext_clickid: getParam('ext_clickid')
       };
 
-      // Формируем ссылки для каждой кнопки
+      // 🔹 Формируем ссылку для "показа" (impression)
+      const impressionUrl = `https://guirmannurcence.com/impression/${encodeURIComponent(params.cpid)}`
+        + `?trafficsource.name=${encodeURIComponent(params['trafficsource.name'])}`
+        + `&trafficsource.campaign.id=${encodeURIComponent(params['trafficsource.campaign.id'])}`
+        + `&voluum.campaign.id=${encodeURIComponent(params['voluum.campaign.id'] || params.cpid)}`
+        + `&lender.version.id=${encodeURIComponent(params['lender.version.id'])}`
+        + `&ext_clickid=${encodeURIComponent(params.ext_clickid || params.clickid)}`;
+
+      // 🔹 Отправляем запрос на пиксель (зажигаем один раз)
+      const img = new Image();
+      img.src = impressionUrl;
+      img.style.display = 'none';
+      document.body.appendChild(img);
+
+      console.log('Impression URL:', impressionUrl);
+
+      // 🔹 Формируем ссылки для кнопок
       const offer1Url = `https://guirmannurcence.com/${encodeURIComponent(params.cpid)}`
         + `?trafficsource.name=${encodeURIComponent(params['trafficsource.name'])}`
         + `&trafficsource.campaign.id=${encodeURIComponent(params['trafficsource.campaign.id'])}`
         + `&voluum.campaign.id=${encodeURIComponent(params.cpid)}`
         + `&lender.version.id=${encodeURIComponent(params['lender.version.id'])}`
         + `&offer.id=${encodeURIComponent(params['offer.id'])}`
-        + `&ext_clickid=${encodeURIComponent(params.clickid)}`
+        + `&ext_clickid=${encodeURIComponent(params.clickid || params.ext_clickid)}`
         + `&oid=dcf8d576-0df6-42d9-89f9-8533019cc31e`;
 
       const offer2Url = `https://guirmannurcence.com/${encodeURIComponent(params.cpid)}`
@@ -70,14 +87,13 @@
         + `&voluum.campaign.id=${encodeURIComponent(params.cpid)}`
         + `&lender.version.id=${encodeURIComponent(params['lender.version.id'])}`
         + `&offer.id=${encodeURIComponent(params['offer.id'])}`
-        + `&ext_clickid=${encodeURIComponent(params.clickid)}`
+        + `&ext_clickid=${encodeURIComponent(params.clickid || params.ext_clickid)}`
         + `&oid=f949fd2e-168d-49b0-894c-4c3ce35c397c`;
 
-      // Вставляем ссылки в кнопки
+      // Привязываем ссылки к кнопкам
       document.getElementById('offer1').href = offer1Url;
       document.getElementById('offer2').href = offer2Url;
 
-      // Для отладки можно вывести в консоль
       console.log('Offer 1 URL:', offer1Url);
       console.log('Offer 2 URL:', offer2Url);
     });
